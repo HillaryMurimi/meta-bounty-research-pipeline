@@ -206,3 +206,110 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) for review expectations. A passing test 
 ## Disclaimer
 
 This is an independent educational research utility. It does not perform live Meta vulnerability discovery and offers **no promise of acceptance, rewards or payment**. The researcher is responsible for scope compliance, privacy, lawful testing, validation, safe evidence handling and truthful disclosure. Meta alone determines bounty eligibility and payouts.
+
+---
+
+## Autonomous offline research engine (next phase)
+
+> [!CAUTION]
+> **Autonomous does not mean permitted to attack Meta.** This engine only inspects files in an explicitly selected **local workspace**. It cannot independently certify Meta scope, exploitability or bounty eligibility. Live Meta scanning, account interactions, automated data collection, exploit execution and automatic submissions are **not implemented**.
+
+### How the engine operates
+
+```mermaid
+flowchart TD
+    A["Approved local source workspace"] --> B["Offline source scan"]
+    B --> C["Pattern discovery"]
+    C --> D["Python AST context + evidence hashes"]
+    D --> E["Stable fingerprint + previous-run comparison"]
+    E --> F["Prioritised candidate queue"]
+    F --> G["SARIF, JSON and readable review brief"]
+    G --> H{"Verified scope + safe reproduction + impact?"}
+    H -->|No| I["Research candidate only"]
+    H -->|Yes, human approved| J["Existing report-draft approval gates"]
+    J --> K["Human submits on Meta's official portal"]
+```
+
+**Automated:** bounded source enumeration, SHA-256 evidence provenance, conservative source-pattern detection, Python AST function-context extraction, deterministic priority ordering, stable candidate fingerprints, new/unchanged/resolved-or-moved comparisons, SARIF 2.1.0 export and a human-readable review queue.
+
+**Not automated:** real vulnerability confirmation, source-to-sink exploitability proof, target eligibility, live penetration testing, access to restricted Meta researcher APIs, severity assignment, report submission or payment.
+
+### Run the autonomous pipeline
+
+Open **PowerShell** in the repository's directory:
+
+```powershell
+python -m unittest discover -s tests -v
+
+# Demonstrate locally: the source is synthetic.
+python autonomous_hunter.py `
+  --policy examples/meta-policy.json `
+  --workspace examples/local-fixture `
+  --output out/research
+```
+
+Expected artifacts, stored locally under the ignored `out/` directory:
+
+| Output | Purpose |
+| --- | --- |
+| `out/research/queue.json` | Machine-readable provenance, review priority, fingerprints, AST context and zero-confirmation flags |
+| `out/research/findings.sarif` | SARIF 2.1.0 static analysis results with `note` severity; useful in compatible code review tooling |
+| `out/research/REVIEW_QUEUE.md` | Human-readable table and validation checklist |
+
+Compare with the **previous saved run** (store the previous queue outside the new output folder):
+
+```powershell
+Copy-Item out/research/queue.json out/previous-queue.json
+python autonomous_hunter.py `
+  --policy examples/meta-policy.json `
+  --workspace examples/local-fixture `
+  --previous out/previous-queue.json `
+  --output out/research
+```
+
+For a separate repository that you **own or are authorised to examine**, replace `--workspace` with its local path. The scanner does **not** download, clone, execute or contact the examined source. Large files, build directories, dependency trees, and symlinks are excluded. The review queue may contain false positives; patterns are *not* validated vulnerabilities.
+
+### Interpreting the prioritised review queue
+
+The numerical `review_priority` is a **sorting heuristic**, not CVSS, exploit probability, award amount or evidence of exploitability.
+
+```json
+{
+  "rule_id": "PY-EXEC",
+  "classification": "investigation_candidate_not_proven",
+  "review_priority": 75,
+  "context": {
+    "analysis": "python_ast",
+    "scope": "function",
+    "taint_proof": false
+  },
+  "requires_human_reproduction": true,
+  "confirmed_vulnerability": false
+}
+```
+
+A local `eval` occurrence is a **lead**, not a finding. Before reporting, independently establish a reachable attacker-controlled input, an actual security boundary, a harmless reproduction and demonstrable impact, then verify Meta's current reward scope and exclusions.
+
+### Why the automation cannot promise bounties
+
+Meta decides whether an issue is novel, in scope, reproducible, impactful and eligible for a reward. Even a demonstrated code weakness in a public repository can be non-eligible. High-volume speculative or AI-generated reports can waste triage time. Do not send the contents of `queue.json` directly to Meta.
+
+### Meta research policy links and access boundaries
+
+- [Official Meta bug bounty portal](https://bugbounty.meta.com/) — read **current** scope and exclusions before any live work.
+- [Meta on scraping-related bounty research](https://about.fb.com/news/2021/12/expanding-bug-bounty-program-to-address-scraping/) — Meta states that its terms do not generally allow automated access and collection of data.
+- [Meta's Zurp tooling](https://github.com/facebookincubator/Zurp) — an official researcher toolset with capabilities intended for vetted Meta Bug Bounty participants; do not assume unrestricted eligibility or API access.
+
+Meta's terms and the availability of researcher privileges may change. The `examples/meta-policy.json` gate deliberately remains **unverified**, even after any human reads the programme rules; it is not a replacement for written, current authorisation.
+
+### Operational security
+
+All research outputs remain ignored by Git by default. Never commit credentials, access tokens, private bounty details, personal data or unpatched vulnerability reproduction details to this public repository. Use separate private local storage for sensitive evidence and submit privately via the official portal.
+
+### Milestones
+
+1. **Complete:** offline autonomous static triage, stable fingerprints, JSON/SARIF evidence, test coverage and manual approval gates.
+2. **Next:** independently evaluated semantic analysis with explicit source-to-sink data-flow checks, stronger deduplication and reproducibility fixtures.
+3. **Conditional:** integrate Meta-sanctioned researcher APIs *only if* eligibility and permission are verified.
+4. **Conditional:** conduct narrowly scoped manual or automation-assisted live tests *only* where the published terms expressly permit the method.
+5. **Never automated by default:** live exploitation, access to third-party user data, disclosure without approval or unreviewed report submission.
