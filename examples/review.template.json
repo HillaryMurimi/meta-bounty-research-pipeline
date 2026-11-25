@@ -1,0 +1,15 @@
+{
+  "meta_scope_verified": false,
+  "explicit_test_authorisation_verified": false,
+  "manual_reproduction_confirmed": false,
+  "real_security_impact_confirmed": false,
+  "nonduplicate_reviewed": false,
+  "operator_approved_report": false,
+  "scope_policy_url": "",
+  "scope_evidence": "",
+  "reproduction_steps": "",
+  "observed_result": "",
+  "expected_result": "",
+  "impact_statement": "",
+  "reviewer": ""
+}

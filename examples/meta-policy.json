@@ -1,0 +1,9 @@
+{
+  "programme": "Meta Bug Bounty",
+  "official_portal": "https://bugbounty.meta.com/",
+  "scope_status": "unverified",
+  "live_testing_approved": false,
+  "network_access": false,
+  "auto_submit": false,
+  "policy_notes": "Full current Meta programme terms unavailable without authenticated portal review. No live target testing is authorised by this example."
+}

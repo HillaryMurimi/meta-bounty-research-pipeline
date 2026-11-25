@@ -1,0 +1,8 @@
+{
+  "program_name": "REPLACE WITH THE ACTUAL BUG BOUNTY PROGRAMME",
+  "authorisation_reference": "REPLACE WITH THE EXACT PROGRAMME POLICY URL / AUTHORISATION",
+  "allowed_urls": ["https://example.org/"],
+  "max_requests_per_run": 1,
+  "min_delay_seconds": 3,
+  "operator_approved_for_live_requests": false
+}
