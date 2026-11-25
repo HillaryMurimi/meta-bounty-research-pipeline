@@ -5,7 +5,7 @@
 **Offline-first vulnerability research • Verifiable evidence • Human-approved reporting**
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Local tests](https://img.shields.io/badge/Local_tests-9_passed-brightgreen)](#development-ci-and-branch-policy)
+[![Offline Python Tests](https://github.com/HillaryMurimi/meta-bounty-research-pipeline/actions/workflows/tests.yml/badge.svg)](https://github.com/HillaryMurimi/meta-bounty-research-pipeline/actions/workflows/tests.yml)
 [![Licence: MIT](https://img.shields.io/badge/Licence-MIT-green.svg)](LICENSE)
 [![Network access](https://img.shields.io/badge/Meta_network_testing-DISABLED-red)](examples/meta-policy.json)
 
@@ -169,7 +169,8 @@ meta-bounty-research-pipeline/
 ├── tests/
 │   ├── test_meta_workflow.py
 │   └── test_bounty.py
-├── docs/ci/tests.yml.example     ← CI template (not enabled; workflow permission needed)
+├── .github/workflows/tests.yml   ← enabled CI on main (offline-only)
+├── docs/ci/tests.yml.example     ← reference copy of CI template
 ├── SECURITY.md                   ← responsible disclosure and privacy
 ├── CONTRIBUTING.md               ← contribution and branch discipline
 ├── LICENSE                       ← MIT licence
@@ -178,7 +179,7 @@ meta-bounty-research-pipeline/
 
 ## Development, CI and branch policy
 
-The repository's only intended long-lived branch is **`main`**. The maintainer commits and pushes directly to `main`; no additional branches are created as part of this setup. The repository includes an **optional, not-yet-enabled** GitHub Actions workflow template at `docs/ci/tests.yml.example`. GitHub rejected uploading a live workflow because the current OAuth token lacks the `workflow` permission. To enable it later, authorise that GitHub scope and move the reviewed template to `.github/workflows/tests.yml` on `main`. The current verification is the **nine local Python unit tests**; no GitHub CI run is claimed. The template itself is offline-only.
+The repository's only intended long-lived branch is **`main`**. The maintainer commits and pushes directly to `main`; no additional branches are created as part of this setup. GitHub Actions is **enabled** in `.github/workflows/tests.yml` and runs the offline Python test suite on pushes to `main` across Python 3.11, 3.12 and 3.13. It never contacts Meta or executes live target scans. The reference template remains under `docs/ci/tests.yml.example`. **Nine tests have been confirmed locally**; check the badge or Actions page for the latest hosted CI result rather than assuming CI passed.
 
 ```powershell
 python -m unittest discover -s tests -v
